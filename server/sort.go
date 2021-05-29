@@ -12,7 +12,7 @@ import (
 type CheckPointHeap []uint64
 
 func (h CheckPointHeap) Len() int           { return len(h) }
-func (h CheckPointHeap) Less(i, j int) bool { return h[i] < h[j] }
+func (h CheckPointHeap) Less(i, j int) bool { return h[i] > h[j] }
 func (h CheckPointHeap) Swap(i, j int)      { h[i], h[j] = h[j], h[i] }
 
 func (h *CheckPointHeap) Push(x interface{}) {
@@ -70,10 +70,11 @@ func (m *SortMap) Put(point uint64, nodes map[common.Address]rpc.Node) {
 	if len(m.items) > m.cache {
 		sort.Sort(*m.index)
 		threshold := len(m.items) - m.cache
-		for size := len(m.items); size > threshold; size-- {
+		for size := len(m.items); threshold > 0; size-- {
 			delete(m.items, (*m.index)[size-1])
+			threshold--
 		}
-		*m.index = (*m.index)[:threshold]
+		*m.index = (*m.index)[:m.cache]
 		heap.Init(m.index)
 	}
 }
@@ -151,10 +152,11 @@ func (m *roundMap) Put(info LostBlockInfo) {
 	if len(m.items) > m.cache {
 		sort.Sort(*m.index)
 		threshold := len(m.items) - m.cache
-		for size := len(m.items); size > threshold; size-- {
+		for size := len(m.items); threshold > 0; size-- {
 			delete(m.items, (*m.index)[size-1])
+			threshold--
 		}
-		*m.index = (*m.index)[:threshold]
+		*m.index = (*m.index)[:m.cache]
 		heap.Init(m.index)
 	}
 

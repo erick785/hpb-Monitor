@@ -1,6 +1,7 @@
 package rpc
 
 import (
+	"errors"
 	"io/ioutil"
 	"net/http"
 	"strings"
@@ -31,9 +32,10 @@ func GetNodeListFromHpbScan(endpoint string) (map[common.Address]Node, error) {
 
 	page := gojsonq.New().FromString(string(body)).Nth(3)
 	result := gojsonq.New().FromInterface(page).Find("list")
-
+	if result == nil {
+		return nil, errors.New("request GetNodeListFromHpbScan failed")
+	}
 	nodes := make(map[common.Address]Node)
-
 	for _, v := range result.([]interface{}) {
 		node := v.(map[string]interface{})
 		nodes[common.HexToAddress(node["nodeAddress"].(string))] = Node{

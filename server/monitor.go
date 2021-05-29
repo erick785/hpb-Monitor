@@ -121,7 +121,8 @@ func (m *Monitor) Loop(c *cli.Context) error {
 
 		blockResult, err := rpc.GetBlockMinerAndHardwareRandom(startNum, m.cfg.NodeEndpoint)
 		if err != nil {
-			return err
+			time.Sleep(loopInterval)
+			continue
 		}
 
 		fmt.Println("---get block->", startNum, blockResult.Difficulty)
@@ -133,7 +134,8 @@ func (m *Monitor) Loop(c *cli.Context) error {
 
 				nodes, err := rpc.GetNodeListFromHpbScan(m.cfg.ScanEndpoint)
 				if err != nil {
-					return err
+					time.Sleep(loopInterval)
+					continue
 				}
 
 				m.nodes.Put(m.latestCheckPoint, nodes)
@@ -143,13 +145,15 @@ func (m *Monitor) Loop(c *cli.Context) error {
 
 			signers, err := rpc.GetHpbNodeSnapSigners(startNum, m.cfg.NodeEndpoint)
 			if err != nil {
-				return err
+				time.Sleep(loopInterval)
+				continue
 			}
 
 			if parentBlockResult == nil {
 				parentBlockResult, err = rpc.GetBlockMinerAndHardwareRandom(startNum-1, m.cfg.NodeEndpoint)
 				if err != nil {
-					return err
+					time.Sleep(loopInterval)
+					continue
 				}
 			}
 
