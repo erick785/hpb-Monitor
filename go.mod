@@ -3,7 +3,6 @@ module github.com/erick785/hpb-monitor
 go 1.15
 
 require (
-	github.com/deathowl/go-metrics-prometheus v0.0.0-20200518174047-74482eab5bfb // indirect
 	github.com/deckarep/golang-set v1.7.1 // indirect
 	github.com/ethereum/go-ethereum v1.10.3
 	github.com/hpb-project/go-hpb v0.0.0-20210510060110-2165d020bc4f
