@@ -121,6 +121,7 @@ func (m *Monitor) Loop(c *cli.Context) error {
 
 		blockResult, err := rpc.GetBlockMinerAndHardwareRandom(startNum, m.cfg.NodeEndpoint)
 		if err != nil {
+			fmt.Println("warn: GetBlockMinerAndHardwareRandom", err)
 			time.Sleep(loopInterval)
 			continue
 		}
@@ -130,21 +131,21 @@ func (m *Monitor) Loop(c *cli.Context) error {
 		if blockResult.Difficulty != "0x2" {
 
 			if m.LatestCheckPointNumber(startNum) != m.latestCheckPoint {
-				m.latestCheckPoint = m.LatestCheckPointNumber(startNum)
 
 				nodes, err := rpc.GetNodeListFromHpbScan(m.cfg.ScanEndpoint)
 				if err != nil {
+					fmt.Println("warn: GetNodeListFromHpbScan", err)
 					time.Sleep(loopInterval)
 					continue
 				}
-
+				m.latestCheckPoint = m.LatestCheckPointNumber(startNum)
 				m.nodes.Put(m.latestCheckPoint, nodes)
-
-				fmt.Println("---update nods->", startNum, m.latestCheckPoint)
+				fmt.Println("---update nodes->", startNum, m.latestCheckPoint, nodes)
 			}
 
 			signers, err := rpc.GetHpbNodeSnapSigners(startNum, m.cfg.NodeEndpoint)
 			if err != nil {
+				fmt.Println("warn: GetHpbNodeSnapSigners", err)
 				time.Sleep(loopInterval)
 				continue
 			}
@@ -152,6 +153,7 @@ func (m *Monitor) Loop(c *cli.Context) error {
 			if parentBlockResult == nil {
 				parentBlockResult, err = rpc.GetBlockMinerAndHardwareRandom(startNum-1, m.cfg.NodeEndpoint)
 				if err != nil {
+					fmt.Println("warn: GetBlockMinerAndHardwareRandom parentBlockResult", err)
 					time.Sleep(loopInterval)
 					continue
 				}
